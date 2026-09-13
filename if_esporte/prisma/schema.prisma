@@ -42,20 +42,26 @@ model Usuario {
     dataCriacao DateTime @default(now())
     dataAtualizacao DateTime @updatedAt
     role Role @default(ADMIN)
-   
-    campusId  Int? 
+
+    campusId  Int?
     campus Campus? @relation(fields:[campusId], references:[id])
+
     eventosOrganizados Evento[] @relation("OrganizadorEvento")
-    inscricoes Inscricao[]   
+    inscricoes Inscricao[]
+
+    preparacoesResponsaveis Preparacao[]
 }
 model Campus {
     id       Int @id @default(autoincrement())
     nome     String
     sigla    String @unique
     cidade   String
-    
+
     usuarios Usuario[]
     eventos  Evento[]
+
+    preparacoes Preparacao[]
+
     partidasComoA Partida[] @relation("CampusAPartida")
     partidasComoB Partida[] @relation("CampusBPartida")
 }
@@ -79,7 +85,11 @@ model Evento {
 model Modalidade{
     id      Int @id @default(autoincrement())
     nome    String @unique
+
     eventos EventoModalidade[]
+
+    preparacoes Preparacao[]
+    partidas Partida[]
 }
 model EventoModalidade{
     eventoId     Int 
