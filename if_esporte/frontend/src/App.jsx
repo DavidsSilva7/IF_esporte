@@ -14,10 +14,24 @@ import Cadastro from "./paginas/Cadastro";
 
 import "./App.css";
 
+// ======================================================
+// PEGAR USUÁRIO DO LOCALSTORAGE
+// ======================================================
 
-// ================================
+function obterUsuario() {
+    try {
+        return JSON.parse(
+            localStorage.getItem("usuario") || "null"
+        );
+    } catch (error) {
+        console.error("Erro ao obter usuário:", error);
+        return null;
+    }
+}
+
+// ======================================================
 // LAYOUT PRINCIPAL
-// ================================
+// ======================================================
 
 function Layout({ children }) {
     return (
@@ -31,69 +45,134 @@ function Layout({ children }) {
     );
 }
 
-
-// ================================
-// PEGAR USUÁRIO DO LOCALSTORAGE
-// ================================
-
-function obterUsuario() {
-    try {
-        return JSON.parse(
-            localStorage.getItem("usuario") || "null"
-        );
-    } catch (error) {
-        console.error("Erro ao obter usuário:", error);
-        return null;
-    }
-}
-
-
-// ================================
-// VERIFICA SE PODE ENTRAR NA ÁREA
-// ================================
+// ======================================================
+// ROTA PÚBLICA
+// ======================================================
+//
+// Dashboard, eventos, calendário, campi e modalidades
+// podem ser acessados sem login.
+//
+// ======================================================
 
 function RotaPublica({ children }) {
-    const token = localStorage.getItem("token");
-    const usuario = obterUsuario();
-
-    // Usuário logado ou visitante
-    if (
-        token ||
-        usuario?.role === "VISITANTE"
-    ) {
-        return children;
-    }
-
-    // Se não estiver logado, volta para o login
-    return <Navigate to="/" replace />;
+    return (
+        <Layout>
+            {children}
+        </Layout>
+    );
 }
 
-
-// ================================
-// ROTA SOMENTE PARA USUÁRIOS LOGADOS
-// ================================
+// ======================================================
+// ROTA AUTENTICADA
+// ======================================================
+//
+// Exige login.
+// ======================================================
 
 function RotaAutenticada({ children }) {
     const token = localStorage.getItem("token");
     const usuario = obterUsuario();
 
-    // Sem token = não está logado
+    // Não está logado
     if (!token) {
-        return <Navigate to="/" replace />;
+        return (
+            <Navigate
+                to="/login"
+                replace
+            />
+        );
     }
 
     // Visitante não pode acessar
+    // áreas exclusivas de usuários
     if (usuario?.role === "VISITANTE") {
-        return <Navigate to="/eventos" replace />;
+        return (
+            <Navigate
+                to="/"
+                replace
+            />
+        );
     }
 
-    return children;
+    return (
+        <Layout>
+            {children}
+        </Layout>
+    );
 }
 
+// ======================================================
+// ROTA ADMIN
+// ======================================================
 
-// ================================
+function RotaAdmin({ children }) {
+    const token = localStorage.getItem("token");
+    const usuario = obterUsuario();
+
+    if (!token) {
+        return (
+            <Navigate
+                to="/login"
+                replace
+            />
+        );
+    }
+
+    if (usuario?.role !== "ADMIN") {
+        return (
+            <Navigate
+                to="/"
+                replace
+            />
+        );
+    }
+
+    return (
+        <Layout>
+            {children}
+        </Layout>
+    );
+}
+
+// ======================================================
+// ROTA ADMIN OU ORGANIZADOR
+// ======================================================
+
+function RotaGerenciamento({ children }) {
+    const token = localStorage.getItem("token");
+    const usuario = obterUsuario();
+
+    if (!token) {
+        return (
+            <Navigate
+                to="/login"
+                replace
+            />
+        );
+    }
+
+    if (
+        usuario?.role !== "ADMIN" &&
+        usuario?.role !== "ORGANIZADOR"
+    ) {
+        return (
+            <Navigate
+                to="/"
+                replace
+            />
+        );
+    }
+
+    return (
+        <Layout>
+            {children}
+        </Layout>
+    );
+}
+
+// ======================================================
 // APLICAÇÃO
-// ================================
+// ======================================================
 
 function App() {
     return (
@@ -101,111 +180,200 @@ function App() {
 
             <Routes>
 
-                {/* =========================
-                    LOGIN
-                ========================= */}
+                {/* ==================================================
+                    DASHBOARD / INÍCIO
+                ================================================== */}
 
                 <Route
                     path="/"
-                    element={<Login />}
+                    element={
+                        <RotaPublica>
+                            <Dashboard />
+                        </RotaPublica>
+                    }
                 />
+
+                {/* Mantém /dashboard funcionando */}
+
+                <Route
+                    path="/dashboard"
+                    element={
+                        <RotaPublica>
+                            <Dashboard />
+                        </RotaPublica>
+                    }
+                />
+
+                {/* ==================================================
+                    LOGIN
+                ================================================== */}
 
                 <Route
                     path="/login"
                     element={<Login />}
                 />
 
-
-                {/* =========================
+                {/* ==================================================
                     CADASTRO
-                ========================= */}
+                ================================================== */}
 
                 <Route
                     path="/cadastro"
                     element={<Cadastro />}
                 />
 
-
-                {/* =========================
-                    PÁGINAS PÚBLICAS
-                    VISITANTE PODE VISUALIZAR
-                ========================= */}
+                {/* ==================================================
+                    EVENTOS
+                ================================================== */}
 
                 <Route
                     path="/eventos"
                     element={
                         <RotaPublica>
-                            <Layout>
-                                <Eventos />
-                            </Layout>
+                            <Eventos />
                         </RotaPublica>
                     }
                 />
+
+                {/* ==================================================
+                    CALENDÁRIO
+                ================================================== */}
 
                 <Route
                     path="/calendario"
                     element={
                         <RotaPublica>
-                            <Layout>
-                                <Calendario />
-                            </Layout>
+                            <Calendario />
                         </RotaPublica>
                     }
                 />
+
+                {/* ==================================================
+                    CAMPI
+                ================================================== */}
 
                 <Route
                     path="/campi"
                     element={
                         <RotaPublica>
-                            <Layout>
-                                <Campi />
-                            </Layout>
+                            <Campi />
                         </RotaPublica>
                     }
                 />
+
+                {/* ==================================================
+                    MODALIDADES
+                ================================================== */}
 
                 <Route
                     path="/modalidades"
                     element={
                         <RotaPublica>
-                            <Layout>
-                                <Modalidades />
-                            </Layout>
+                            <Modalidades />
                         </RotaPublica>
                     }
                 />
 
-
-                {/* =========================
-                    PÁGINAS SOMENTE LOGADAS
-                ========================= */}
-
-                <Route
-                    path="/dashboard"
-                    element={
-                        <RotaAutenticada>
-                            <Layout>
-                                <Dashboard />
-                            </Layout>
-                        </RotaAutenticada>
-                    }
-                />
+                {/* ==================================================
+                    INSCRIÇÕES
+                ================================================== */}
 
                 <Route
                     path="/inscricoes"
                     element={
                         <RotaAutenticada>
-                            <Layout>
-                                <Inscricoes />
-                            </Layout>
+                            <Inscricoes />
                         </RotaAutenticada>
                     }
                 />
 
+                {/* ==================================================
+                    PREPARAÇÕES
+                ================================================== */}
 
-                {/* =========================
+                <Route
+                    path="/preparacoes"
+                    element={
+                        <RotaGerenciamento>
+                            <div className="page">
+
+                                <h2>Preparações</h2>
+
+                                <p>
+                                    Área de preparação esportiva.
+                                </p>
+
+                            </div>
+                        </RotaGerenciamento>
+                    }
+                />
+
+                {/* ==================================================
+                    PARTIDAS
+                ================================================== */}
+
+                <Route
+                    path="/partidas"
+                    element={
+                        <RotaGerenciamento>
+                            <div className="page">
+
+                                <h2>Partidas</h2>
+
+                                <p>
+                                    Área de acompanhamento das partidas.
+                                </p>
+
+                            </div>
+                        </RotaGerenciamento>
+                    }
+                />
+
+                {/* ==================================================
+                    CLASSIFICAÇÃO
+                ================================================== */}
+
+                <Route
+                    path="/classificacao"
+                    element={
+                        <RotaGerenciamento>
+                            <div className="page">
+
+                                <h2>Classificação</h2>
+
+                                <p>
+                                    Área de classificação das competições.
+                                </p>
+
+                            </div>
+                        </RotaGerenciamento>
+                    }
+                />
+
+                {/* ==================================================
+                    USUÁRIOS
+                ================================================== */}
+
+                <Route
+                    path="/usuarios"
+                    element={
+                        <RotaAdmin>
+                            <div className="page">
+
+                                <h2>Usuários</h2>
+
+                                <p>
+                                    Gerenciamento de usuários do sistema.
+                                </p>
+
+                            </div>
+                        </RotaAdmin>
+                    }
+                />
+
+                {/* ==================================================
                     ROTA NÃO ENCONTRADA
-                ========================= */}
+                ================================================== */}
 
                 <Route
                     path="*"
@@ -222,5 +390,4 @@ function App() {
         </BrowserRouter>
     );
 }
-
 export default App;

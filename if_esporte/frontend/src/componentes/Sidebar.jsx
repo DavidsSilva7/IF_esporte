@@ -1,83 +1,198 @@
 import { NavLink } from "react-router-dom";
 
 function Sidebar() {
-    const usuario = JSON.parse(
-        localStorage.getItem("usuario") || "null"
-    );
+    let usuario = null;
 
-    const visitante =
-        localStorage.getItem("visitante") === "true";
+    try {
+        usuario = JSON.parse(
+            localStorage.getItem("usuario") || "null"
+        );
+    } catch (erro) {
+        console.error("Erro ao carregar usuário:", erro);
+    }
 
-    const role = visitante
-        ? "VISITANTE"
-        : usuario?.role || "VISITANTE";
-
-    const podeGerenciar =
-        role === "ADMIN" ||
-        role === "ORGANIZADOR";
+    const role = usuario?.role || "VISITANTE";
 
     const isAdmin = role === "ADMIN";
+    const isOrganizador = role === "ORGANIZADOR";
+    const isRepresentante = role === "REPRESENTANTE";
+
+    const podeGerenciar =
+        isAdmin || isOrganizador;
+
+    const podeAcessarInscricoes =
+        isAdmin ||
+        isOrganizador ||
+        isRepresentante;
 
     return (
         <aside className="sidebar">
-            <h1>IF ESPORTE</h1>
 
-            <nav>
-                {/* INÍCIO */}
-                <NavLink to="/" end>
-                    🏠 Início
+            {/* LOGO */}
+            <div className="sidebar-logo">
+                <h1>IF ESPORTE</h1>
+                <span>Plataforma Esportiva</span>
+            </div>
+
+            {/* USUÁRIO */}
+            <div className="sidebar-usuario">
+                <div className="sidebar-avatar">
+                    {usuario?.nome
+                        ? usuario.nome.charAt(0).toUpperCase()
+                        : "V"}
+                </div>
+
+                <div className="sidebar-usuario-info">
+                    <strong>
+                        {usuario?.nome || "Visitante"}
+                    </strong>
+
+                    <small>
+                        {role === "ADMIN"
+                            ? "Administrador"
+                            : role === "ORGANIZADOR"
+                            ? "Organizador"
+                            : role === "REPRESENTANTE"
+                            ? "Representante"
+                            : "Visitante"}
+                    </small>
+                </div>
+            </div>
+
+            {/* MENU */}
+            <nav className="sidebar-menu">
+
+                <NavLink
+                    to="/"
+                    end
+                    className={({ isActive }) =>
+                        isActive ? "active" : ""
+                    }
+                >
+                    🏠
+                    <span>Início</span>
                 </NavLink>
 
-                {/* PÁGINAS PÚBLICAS */}
-                <NavLink to="/calendario">
-                    📅 Calendário
+                <NavLink
+                    to="/calendario"
+                    className={({ isActive }) =>
+                        isActive ? "active" : ""
+                    }
+                >
+                    📅
+                    <span>Calendário</span>
                 </NavLink>
 
-                <NavLink to="/eventos">
-                    🏆 Eventos
+                <NavLink
+                    to="/eventos"
+                    className={({ isActive }) =>
+                        isActive ? "active" : ""
+                    }
+                >
+                    🏆
+                    <span>Eventos</span>
                 </NavLink>
 
-                <NavLink to="/campi">
-                    🏫 Campi
+                <NavLink
+                    to="/campi"
+                    className={({ isActive }) =>
+                        isActive ? "active" : ""
+                    }
+                >
+                    🏫
+                    <span>Campi</span>
                 </NavLink>
 
-                <NavLink to="/modalidades">
-                    ⚽ Modalidades
+                <NavLink
+                    to="/modalidades"
+                    className={({ isActive }) =>
+                        isActive ? "active" : ""
+                    }
+                >
+                    ⚽
+                    <span>Modalidades</span>
                 </NavLink>
 
-                {/* INSCRIÇÕES
-                    Visitante não pode acessar
-                */}
-                {role !== "VISITANTE" && (
-                    <NavLink to="/inscricoes">
-                        📝 Inscrições
+                {/* INSCRIÇÕES */}
+                {podeAcessarInscricoes && (
+                    <NavLink
+                        to="/inscricoes"
+                        className={({ isActive }) =>
+                            isActive ? "active" : ""
+                        }
+                    >
+                        📝
+                        <span>Inscrições</span>
                     </NavLink>
                 )}
 
-                {/* GERENCIAMENTO */}
+                {/* ÁREA DE GERENCIAMENTO */}
                 {podeGerenciar && (
                     <>
-                        <NavLink to="/preparacoes">
-                            🏋️ Preparações
+                        <div className="sidebar-separador">
+                            <span>GERENCIAMENTO</span>
+                        </div>
+
+                        <NavLink
+                            to="/preparacoes"
+                            className={({ isActive }) =>
+                                isActive ? "active" : ""
+                            }
+                        >
+                            🏋️
+                            <span>Preparações</span>
                         </NavLink>
 
-                        <NavLink to="/partidas">
-                            🏟️ Partidas
+                        <NavLink
+                            to="/partidas"
+                            className={({ isActive }) =>
+                                isActive ? "active" : ""
+                            }
+                        >
+                            🏟️
+                            <span>Partidas</span>
                         </NavLink>
 
-                        <NavLink to="/classificacao">
-                            🥇 Classificação
+                        <NavLink
+                            to="/classificacao"
+                            className={({ isActive }) =>
+                                isActive ? "active" : ""
+                            }
+                        >
+                            🥇
+                            <span>Classificação</span>
                         </NavLink>
                     </>
                 )}
 
-                {/* ADMINISTRADOR */}
+                {/* ADMINISTRAÇÃO */}
                 {isAdmin && (
-                    <NavLink to="/usuarios">
-                        👥 Usuários
-                    </NavLink>
+                    <>
+                        <div className="sidebar-separador">
+                            <span>ADMINISTRAÇÃO</span>
+                        </div>
+
+                        <NavLink
+                            to="/usuarios"
+                            className={({ isActive }) =>
+                                isActive ? "active" : ""
+                            }
+                        >
+                            👥
+                            <span>Usuários</span>
+                        </NavLink>
+                    </>
                 )}
+
             </nav>
+
+            {/* RODAPÉ */}
+            <div className="sidebar-footer">
+                <small>
+                    IF Baiano
+                </small>
+            </div>
+
         </aside>
     );
 }
