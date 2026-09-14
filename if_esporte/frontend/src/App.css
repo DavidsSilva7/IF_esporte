@@ -1,5 +1,5 @@
 /* =========================================================
-   RESET
+   VARIÁVEIS / RESET
 ========================================================= */
 
 * {
@@ -9,29 +9,21 @@
 }
 
 :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --primary-light: #eff6ff;
+    --green: #176d20;
+    --green-dark: #0d5816;
+    --green-light: #eef6f0;
+    --green-soft: #f6f8f6;
 
-    --background: #f5f7fa;
-    --surface: #ffffff;
+    --red: #d71920;
 
-    --text: #1f2937;
-    --text-secondary: #6b7280;
-    --text-light: #9ca3af;
+    --bg: #f5f7f5;
+    --white: #fff;
 
-    --border: #e5e7eb;
+    --text: #222;
+    --muted: #666;
 
-    --sidebar: #111827;
-    --sidebar-hover: #1f2937;
-    --sidebar-text: #d1d5db;
-
-    --success: #16a34a;
-    --warning: #d97706;
-    --danger: #dc2626;
-
-    --radius: 10px;
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --border: #d9dfda;
+    --radius: 5px;
 }
 
 html {
@@ -39,20 +31,81 @@ html {
 }
 
 body {
+    min-height: 100vh;
     font-family: Arial, Helvetica, sans-serif;
-    background: var(--background);
     color: var(--text);
-    line-height: 1.5;
+    background: var(--bg);
+}
+
+a {
+    color: inherit;
+}
+
+img {
+    display: block;
+    max-width: 100%;
 }
 
 
 /* =========================================================
-   APP
+   ESTRUTURA
 ========================================================= */
 
 .app {
     min-height: 100vh;
+}
+
+.main {
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    margin-left: 250px;
+    background: var(--bg);
+}
+
+.main > div,
+.main > section {
+    width: 100%;
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 25px 30px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    height: 52px;
+    padding: 0 30px;
+
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: var(--white);
+    border-top: 4px solid #79b87c;
+    border-bottom: 1px solid var(--border);
+}
+
+.header h2 {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.header button {
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 4px;
+
+    color: var(--white);
+    background: var(--green);
+
+    cursor: pointer;
+}
+
+.header button:hover {
+    background: var(--green-dark);
 }
 
 
@@ -61,152 +114,345 @@ body {
 ========================================================= */
 
 .sidebar {
-    width: 250px;
-    min-height: 100vh;
-
-    background: var(--sidebar);
-    color: white;
-
-    padding: 24px 14px;
-
     position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
+    inset: 0 auto 0 0;
 
-    z-index: 100;
+    width: 250px;
+    height: 100vh;
+
+    padding: 15px 10px;
+
+    background: var(--white);
+    border-right: 1px solid var(--border);
 
     overflow-y: auto;
+    z-index: 100;
 }
 
-.sidebar h1 {
-    font-size: 22px;
-    font-weight: 700;
 
-    margin-bottom: 35px;
-    padding: 0 12px;
+/* =========================================================
+   LOGO
+========================================================= */
 
-    letter-spacing: -0.3px;
-}
-
-.sidebar nav {
+.sidebar-logo {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-}
-
-.sidebar nav a {
-    display: flex;
     align-items: center;
 
-    color: var(--sidebar-text);
+    padding: 5px 10px 18px;
+    margin-bottom: 18px;
+
+    text-align: center;
+    border-bottom: 3px solid var(--green);
+}
+
+.sidebar-logo img {
+    width: 115px;
+    height: 95px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.sidebar-logo h1 {
+    font-size: 23px;
+    line-height: .95;
+    font-weight: 800;
+}
+
+.sidebar-logo p {
+    margin-top: 5px;
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   MENU PRINCIPAL
+========================================================= */
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 30px;
+    padding: 6px 10px;
+
+    color: var(--white);
+    background: var(--green);
+
+    border-radius: 6px;
+
     text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
 
-    padding: 12px 14px;
-
-    border-radius: 8px;
-
-    font-size: 14px;
-    font-weight: 500;
-
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
+    transition: background .2s;
 }
 
-.sidebar nav a:hover {
-    background: var(--sidebar-hover);
-    color: white;
-    transform: translateX(2px);
+.sidebar-item:hover,
+.sidebar-item.active {
+    background: var(--green-dark);
 }
 
-.sidebar nav a.active {
-    background: var(--primary);
-    color: white;
+.sidebar-icon {
+    display: none;
 }
 
 
 /* =========================================================
-   CONTEÚDO PRINCIPAL
+   SEÇÕES DA SIDEBAR
 ========================================================= */
 
-.main {
-    margin-left: 250px;
+.sidebar-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 
-    width: calc(100% - 250px);
-
-    min-height: 100vh;
+    margin-top: 38px;
 }
 
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-.main header {
-    height: 72px;
-
-    background: var(--surface);
-
-    border-bottom: 1px solid var(--border);
+.sidebar-section {
+    min-height: 62px;
+    padding: 12px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 0 32px;
+    color: #111;
+    background: var(--green-soft);
 
-    position: sticky;
-    top: 0;
-
-    z-index: 50;
-}
-
-.main header h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text);
-}
-
-.main header button {
-    background: var(--primary);
-    color: white;
-
-    border: none;
-
-    padding: 10px 18px;
-
-    border-radius: 7px;
+    border-top: 2px solid #65b56b;
 
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
 
     cursor: pointer;
-
-    transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.main header button:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
+.sidebar-section:hover {
+    background: #eef5ef;
+}
+
+.sidebar-section-title {
+    max-width: 210px;
+}
+
+.sidebar-section-arrow {
+    color: #319d43;
+    font-size: 16px;
 }
 
 
 /* =========================================================
-   ÁREA DAS PÁGINAS
+   CAMPI
 ========================================================= */
 
-.main > div,
-.main > section {
-    padding: 32px;
+.campi {
+    padding: 0 30px 25px;
 }
 
-.main h2 {
-    margin-bottom: 24px;
+.campi-titulo {
+    display: inline-block;
 
-    font-size: 26px;
+    padding: 4px 12px;
+
+    color: var(--white);
+    background: var(--red);
+
+    border-radius: 5px 5px 0 0;
+
+    font-size: 15px;
     font-weight: 700;
+    text-transform: uppercase;
+}
+
+.campi-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    padding: 12px;
+
+    background: #f7f9f7;
+}
+
+.campi-lista a {
+    padding: 10px 16px;
+
+    color: var(--green);
+    background: var(--white);
+
+    border: 1px solid #39a14a;
+    border-radius: 5px;
+
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.campi-lista a:hover {
+    color: var(--white);
+    background: var(--green);
+}
+
+
+/* =========================================================
+   LAYOUT DO PORTAL
+========================================================= */
+
+.portal-grid {
+    display: grid;
+    grid-template-columns: 285px minmax(0, 1fr) 230px;
+    gap: 22px;
+    align-items: start;
+}
+
+
+/* =========================================================
+   BANNER
+========================================================= */
+
+.banner {
+    position: relative;
+
+    width: 100%;
+    height: 325px;
+
+    overflow: hidden;
+
+    background: var(--green-dark);
+    border-radius: 5px;
+}
+
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner-conteudo {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: 28px;
+
+    color: var(--white);
+}
+
+.banner-conteudo h1 {
+    max-width: 750px;
+
+    font-size: 30px;
+    line-height: 1.15;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+.eventos {
+    margin-top: 22px;
+}
+
+.eventos-titulo {
+    margin-bottom: 12px;
+
+    color: var(--green);
+
+    font-size: 18px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.event-card {
+    overflow: hidden;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+
+    transition: transform .2s;
+}
+
+.event-card:hover {
+    transform: translateY(-2px);
+}
+
+.event-card img {
+    width: 100%;
+    height: 125px;
+    object-fit: cover;
+}
+
+.event-card-content {
+    padding: 10px;
+}
+
+.event-card h3 {
+    margin-bottom: 5px;
+
+    color: var(--green);
+
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.event-card p {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   COLUNA LATERAL
+========================================================= */
+
+.portal-links {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.portal-links a {
+    padding: 8px 10px;
+
+    color: var(--white);
+    background: #21864e;
+
+    border-radius: 4px;
+
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.portal-links a:hover {
+    background: var(--green-dark);
+}
+
+.portal-links img {
+    width: 100%;
+    height: 150px;
+
+    margin-bottom: 5px;
+
+    object-fit: cover;
 }
 
 
@@ -214,42 +460,77 @@ body {
    CARDS
 ========================================================= */
 
-.card {
-    background: var(--surface);
-
+.card,
+.formulario-evento,
+.calendario,
+.filtros {
+    background: var(--white);
     border: 1px solid var(--border);
-
     border-radius: var(--radius);
-
-    padding: 22px;
-
-    margin-bottom: 18px;
-
-    box-shadow: var(--shadow);
-
-    transition:
-        box-shadow 0.2s ease,
-        transform 0.2s ease;
 }
 
-.card:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
-    transform: translateY(-1px);
+.card,
+.formulario-evento,
+.calendario {
+    padding: 20px;
 }
 
 .card h3 {
-    margin-bottom: 10px;
-
-    font-size: 18px;
-    color: var(--text);
+    margin-bottom: 8px;
+    color: var(--green);
 }
 
 .card p {
-    margin-bottom: 7px;
+    color: var(--muted);
+    font-size: 14px;
+}
 
-    color: var(--text-secondary);
+
+/* =========================================================
+   FORMULÁRIOS
+========================================================= */
+
+form label {
+    display: block;
+    margin-bottom: 5px;
 
     font-size: 14px;
+    font-weight: 600;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+
+    color: var(--text);
+    background: var(--white);
+
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    font: inherit;
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 2px rgba(0, 107, 47, .1);
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.formulario-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
 }
 
 
@@ -259,306 +540,39 @@ body {
 
 button,
 .btn {
-    border: none;
+    padding: 9px 15px;
 
-    border-radius: 7px;
-
-    padding: 10px 16px;
+    border: 0;
+    border-radius: 5px;
 
     font-size: 14px;
     font-weight: 600;
 
     cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-button:hover,
-.btn:hover {
-    transform: translateY(-1px);
 }
 
 .btn-primary {
-    background: var(--primary);
-    color: white;
+    color: var(--white);
+    background: var(--green);
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
+    background: var(--green-dark);
 }
 
 .btn-danger {
-    background: var(--danger);
-    color: white;
+    color: var(--white);
+    background: #dc2626;
 }
 
 .btn-success {
-    background: var(--success);
-    color: white;
+    color: var(--white);
+    background: #16a34a;
 }
 
 .btn-secondary {
+    color: var(--text);
     background: #e5e7eb;
-    color: var(--text);
-}
-
-
-/* =========================================================
-   FORMULÁRIOS
-========================================================= */
-
-form {
-    background: var(--surface);
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    padding: 24px;
-
-    box-shadow: var(--shadow);
-}
-
-form label {
-    display: block;
-
-    margin-bottom: 6px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    color: var(--text);
-}
-
-form input,
-form select,
-form textarea {
-    width: 100%;
-
-    padding: 11px 13px;
-
-    margin-bottom: 18px;
-
-    border: 1px solid #d1d5db;
-
-    border-radius: 7px;
-
-    background: white;
-
-    color: var(--text);
-
-    font-size: 14px;
-
-    outline: none;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-form input:focus,
-form select:focus,
-form textarea:focus {
-    border-color: var(--primary);
-
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-form textarea {
-    min-height: 120px;
-
-    resize: vertical;
-}
-
-
-/* =========================================================
-   CALENDÁRIO
-========================================================= */
-
-.calendario {
-    background: var(--surface);
-
-    border-radius: 12px;
-
-    padding: 24px;
-
-    border: 1px solid var(--border);
-
-    box-shadow: var(--shadow);
-}
-
-
-/* Cabeçalho */
-
-.calendario-cabecalho {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    margin-bottom: 24px;
-}
-
-.calendario-cabecalho h2 {
-    margin: 0;
-
-    font-size: 24px;
-
-    font-weight: 700;
-}
-
-.calendario-cabecalho button {
-    width: 40px;
-    height: 40px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border: none;
-
-    border-radius: 8px;
-
-    background: var(--primary);
-
-    color: white;
-
-    font-size: 20px;
-
-    cursor: pointer;
-
-    transition: background 0.2s ease;
-}
-
-.calendario-cabecalho button:hover {
-    background: var(--primary-dark);
-}
-
-
-/* =========================================================
-   DIAS DA SEMANA
-========================================================= */
-
-.dias-semana {
-    display: grid;
-
-    grid-template-columns: repeat(7, 1fr);
-
-    border-top: 1px solid var(--border);
-    border-left: 1px solid var(--border);
-
-    background: #f9fafb;
-}
-
-.dias-semana span {
-    text-align: center;
-
-    font-weight: 600;
-
-    padding: 12px 5px;
-
-    color: var(--text-secondary);
-
-    font-size: 13px;
-
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-}
-
-
-/* =========================================================
-   GRADE DO CALENDÁRIO
-========================================================= */
-
-.grade-calendario {
-    display: grid;
-
-    grid-template-columns: repeat(7, 1fr);
-
-    border-left: 1px solid var(--border);
-}
-
-
-/* =========================================================
-   DIA
-========================================================= */
-
-.dia {
-    min-height: 115px;
-
-    padding: 10px;
-
-    background: white;
-
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-
-    transition: background 0.2s ease;
-}
-
-.dia:hover {
-    background: #fafafa;
-}
-
-.dia strong {
-    display: block;
-
-    margin-bottom: 8px;
-
-    font-size: 14px;
-
-    color: var(--text);
-}
-
-
-/* Dia atual */
-
-.dia.hoje {
-    background: var(--primary-light);
-}
-
-.dia.hoje strong {
-    color: var(--primary);
-}
-
-
-/* =========================================================
-   EVENTO DENTRO DO CALENDÁRIO
-========================================================= */
-
-.evento-calendario {
-    background: var(--primary);
-
-    color: white;
-
-    border-radius: 5px;
-
-    padding: 6px 8px;
-
-    margin-top: 5px;
-
-    font-size: 12px;
-
-    line-height: 1.3;
-
-    overflow: hidden;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease;
-}
-
-.evento-calendario:hover {
-    background: var(--primary-dark);
-
-    transform: translateY(-1px);
 }
 
 
@@ -568,495 +582,369 @@ form textarea {
 
 .filtros {
     display: flex;
-
     flex-wrap: wrap;
+    gap: 10px;
 
-    gap: 12px;
-
-    margin-bottom: 24px;
-
-    padding: 18px;
-
-    background: white;
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
+    padding: 15px;
+    margin-bottom: 20px;
 }
 
 .filtros input,
 .filtros select {
-    padding: 10px 12px;
-
-    border: 1px solid #d1d5db;
-
-    border-radius: 7px;
-
-    outline: none;
-
-    font-size: 14px;
-
-    background: white;
-}
-
-.filtros input:focus,
-.filtros select:focus {
-    border-color: var(--primary);
+    width: auto;
+    min-width: 170px;
+    margin: 0;
 }
 
 
 /* =========================================================
-   STATUS DOS EVENTOS
+   STATUS
 ========================================================= */
 
 .status {
-    display: inline-flex;
+    display: inline-block;
 
-    align-items: center;
+    padding: 4px 9px;
 
-    padding: 5px 9px;
-
-    border-radius: 20px;
+    border-radius: 15px;
 
     font-size: 12px;
-
     font-weight: 600;
 }
 
 .status-aberto {
-    background: #dcfce7;
     color: #166534;
+    background: #dcfce7;
 }
 
 .status-planejado {
-    background: #dbeafe;
     color: #1e40af;
+    background: #dbeafe;
 }
 
 .status-encerrado {
-    background: #f3f4f6;
     color: #4b5563;
+    background: #f3f4f6;
 }
 
 .status-cancelado {
-    background: #fee2e2;
     color: #991b1b;
+    background: #fee2e2;
 }
 
 
 /* =========================================================
-   MENSAGENS
+   CALENDÁRIO
 ========================================================= */
 
-.mensagem {
-    padding: 12px 15px;
-
-    border-radius: 7px;
-
-    margin-bottom: 18px;
-
-    font-size: 14px;
+.calendario {
+    width: 100%;
 }
 
-.mensagem-sucesso {
-    background: #dcfce7;
-
-    color: #166534;
-
-    border: 1px solid #bbf7d0;
-}
-
-.mensagem-erro {
-    background: #fee2e2;
-
-    color: #991b1b;
-
-    border: 1px solid #fecaca;
-}
-
-.mensagem-aviso {
-    background: #fef3c7;
-
-    color: #92400e;
-
-    border: 1px solid #fde68a;
-}
-
-
-/* =========================================================
-   RESPONSIVIDADE
-========================================================= */
-
-@media (max-width: 900px) {
-
-    .sidebar {
-        width: 210px;
-    }
-
-    .main {
-        margin-left: 210px;
-
-        width: calc(100% - 210px);
-    }
-
-    .main > div,
-    .main > section {
-        padding: 24px;
-    }
-
-    .main header {
-        padding: 0 24px;
-    }
-
-    .dia {
-        min-height: 95px;
-    }
-}
-
-
-@media (max-width: 768px) {
-
-    .sidebar {
-        width: 70px;
-
-        padding: 20px 8px;
-    }
-
-    .sidebar h1 {
-        font-size: 0;
-
-        margin-bottom: 25px;
-    }
-
-    .sidebar h1::before {
-        content: "NE";
-
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    .sidebar nav a {
-        justify-content: center;
-
-        font-size: 0;
-
-        padding: 13px 8px;
-    }
-
-    .main {
-        margin-left: 70px;
-
-        width: calc(100% - 70px);
-    }
-
-    .main header {
-        padding: 0 16px;
-    }
-
-    .main header h2 {
-        font-size: 17px;
-    }
-
-    .main header button {
-        padding: 8px 12px;
-    }
-
-    .main > div,
-    .main > section {
-        padding: 18px;
-    }
-
-    .main h2 {
-        font-size: 22px;
-    }
-
-    .calendario {
-        padding: 12px;
-    }
-
-    .calendario-cabecalho h2 {
-        font-size: 20px;
-    }
-
-    .dia {
-        min-height: 80px;
-
-        padding: 6px;
-    }
-
-    .dia strong {
-        font-size: 12px;
-    }
-
-    .evento-calendario {
-        font-size: 10px;
-
-        padding: 4px 5px;
-    }
-
-    .dias-semana span {
-        font-size: 11px;
-
-        padding: 9px 3px;
-    }
-
-    .filtros {
-        flex-direction: column;
-    }
-
-    .filtros input,
-    .filtros select {
-        width: 100%;
-    }
-}
-
-
-@media (max-width: 480px) {
-
-    .sidebar {
-        width: 58px;
-    }
-
-    .main {
-        margin-left: 58px;
-
-        width: calc(100% - 58px);
-    }
-
-    .main > div,
-    .main > section {
-        padding: 12px;
-    }
-
-    .main header {
-        height: 60px;
-    }
-
-    .main header h2 {
-        font-size: 15px;
-    }
-
-    .main header button {
-        font-size: 12px;
-
-        padding: 7px 10px;
-    }
-
-    .calendario {
-        padding: 8px;
-    }
-
-    .dia {
-        min-height: 65px;
-
-        padding: 4px;
-    }
-
-    .dia strong {
-        font-size: 11px;
-    }
-
-    .evento-calendario {
-        font-size: 9px;
-
-        padding: 3px;
-    }
-}
-/* =========================
-   SIDEBAR
-========================= */
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 288px;
-  height: 100vh;
-
-  background: linear-gradient(
-    180deg,
-    #003c2f 0%,
-    #002f28 100%
-  );
-
-  color: #ffffff;
-
-  padding: 28px 22px;
-
-  display: flex;
-  flex-direction: column;
-
-  z-index: 100;
-}
-
-
-/* LOGO */
-
-.sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-
-  padding: 0 14px;
-  margin-bottom: 38px;
-}
-
-.sidebar-logo h1 {
-  font-size: 25px;
-  font-weight: 800;
-  font-style: italic;
-
-  letter-spacing: -0.5px;
-
-  margin: 0;
-}
-
-.sidebar-logo p {
-  margin: 1px 0 0;
-
-  font-size: 13px;
-  color: #d7e8e3;
-}
-
-
-/* GRID DA LOGO */
-
-.logo-grid {
-  width: 45px;
-  height: 45px;
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-}
-
-.logo-grid span {
-  display: block;
-
-  border-radius: 2px;
-
-  background: #9ee3b0;
-}
-
-.logo-grid span:nth-child(2),
-.logo-grid span:nth-child(3),
-.logo-grid span:nth-child(6) {
-  background: #c5efce;
-}
-
-.logo-grid .logo-red {
-  background: #ff7b83;
-}
-
-
-/* MENU */
-
-.sidebar-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-
-.sidebar-item {
-  height: 51px;
-
-  padding: 0 17px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 17px;
-
-  border-radius: 9px;
-
-  color: #ffffff;
-  text-decoration: none;
-
-  font-size: 16px;
-
-  transition: 0.2s ease;
-}
-
-
-.sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-
-.sidebar-item.active {
-  background: #126d49;
-}
-
-
-.sidebar-icon {
-  width: 25px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 23px;
-}
-
-
-/* RODAPÉ */
-
-.sidebar-footer {
-  margin-top: auto;
-
-  padding: 0 19px 8px;
-
-  display: flex;
-  flex-direction: column;
-
-  font-size: 19px;
-  line-height: 1.35;
-
-  color: #f0f7f5;
-}
-
-
-.footer-line {
-  width: 62px;
-  height: 3px;
-
-  margin-top: 17px;
-
-  border-radius: 10px;
-
-  background: #27b86e;
-}
-.main {
-    margin-left: 288px;
-    min-height: 100vh;
-    background: #f5f8fa;
-}
-.header {
-    height: 98px;
-    background: white;
-
+.calendario-cabecalho {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 0 36px;
+    margin-bottom: 18px;
+}
 
-    border-bottom: 1px solid #e5e7eb;
+.calendario-cabecalho h2 {
+    margin: 0;
+    color: var(--green);
+    font-size: 22px;
 }
-.dashboard-grid {
+
+.dias-semana,
+.grade-calendario {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 355px;
-    gap: 24px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
 }
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+
+.dias-semana {
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
 }
-.events-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+
+.dias-semana span,
+.dia {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.dias-semana span {
+    padding: 10px;
+
+    color: var(--green);
+    background: #f3f7f3;
+
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.dia {
+    min-height: 115px;
+    padding: 8px;
+
+    background: var(--white);
+}
+
+.dia:hover {
+    background: #fafcfa;
+}
+
+.dia strong {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 27px;
+    height: 27px;
+
+    margin-bottom: 5px;
+
+    font-size: 12px;
+}
+
+.dia.hoje {
+    background: var(--green-light);
+}
+
+.dia.hoje strong {
+    color: var(--white);
+    background: var(--green);
+    border-radius: 50%;
+}
+
+.evento-calendario {
+    display: block;
+
+    padding: 5px 7px;
+    margin-top: 4px;
+
+    color: var(--white);
+    background: var(--green);
+
+    border-radius: 3px;
+
+    font-size: 11px;
+    line-height: 1.25;
+
+    cursor: pointer;
+}
+
+.evento-calendario:hover {
+    background: var(--green-dark);
+}
+
+
+/* =========================================================
+   LEGENDA DO CALENDÁRIO
+========================================================= */
+
+.calendario-legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    padding: 13px 15px;
+    margin-top: 12px;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+
+    font-size: 12px;
+}
+
+.legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legenda-cor {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.legenda-aberto {
+    background: #27ae60;
+}
+
+.legenda-planejado {
+    background: #2878d4;
+}
+
+.legenda-encerrado {
+    background: #555;
+}
+
+.legenda-cancelado {
+    background: #d71920;
+}
+
+
+/* =========================================================
+   RESPONSIVO — TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .portal-grid {
+        grid-template-columns: 220px 1fr;
+    }
+
+    .portal-links {
+        grid-column: 1 / -1;
+
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVO — MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        width: 65px;
+        padding: 15px 7px;
+    }
+
+    .main {
+        width: calc(100% - 65px);
+        margin-left: 65px;
+    }
+
+    .sidebar-logo {
+        border: 0;
+    }
+
+    .sidebar-logo img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .sidebar-logo h1,
+    .sidebar-logo p,
+    .sidebar-item span:not(.sidebar-icon) {
+        display: none;
+    }
+
+    .sidebar-item {
+        justify-content: center;
+        border: 0;
+    }
+
+    .sidebar-sections {
+        margin-top: 20px;
+    }
+
+    .sidebar-section {
+        justify-content: center;
+        min-height: 45px;
+        padding: 5px;
+    }
+
+    .sidebar-section-title {
+        display: none;
+    }
+
+    .portal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-links {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .events-grid,
+    .formulario-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dia {
+        min-height: 90px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVO — CELULAR
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .sidebar {
+        width: 55px;
+    }
+
+    .main {
+        width: calc(100% - 55px);
+        margin-left: 55px;
+    }
+
+    .main > div,
+    .main > section {
+        padding: 15px;
+    }
+
+    .header {
+        padding: 0 12px;
+    }
+
+    .banner {
+        height: 230px;
+    }
+
+    .banner-conteudo {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+    }
+
+    .banner-conteudo h1 {
+        font-size: 20px;
+    }
+
+    .portal-links {
+        grid-template-columns: 1fr;
+    }
+
+    .campi {
+        padding: 0 15px 15px;
+    }
+
+    .campi-lista a {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .calendario {
+        padding: 10px;
+        overflow-x: auto;
+    }
+
+    .dias-semana,
+    .grade-calendario {
+        min-width: 600px;
+    }
+
+    .calendario-cabecalho {
+        gap: 10px;
+    }
+
+    .calendario-cabecalho h2 {
+        font-size: 18px;
+    }
 }

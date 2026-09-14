@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function Cadastro() {
@@ -7,108 +7,125 @@ function Cadastro() {
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
-    const [campusId, setCampusId] = useState("");
+    const [confirmarSenha, setConfirmarSenha] = useState("");
 
-    const [campi, setCampi] = useState([]);
     const [erro, setErro] = useState("");
     const [sucesso, setSucesso] = useState("");
     const [carregando, setCarregando] = useState(false);
-
-    useEffect(() => {
-        carregarCampi();
-    }, []);
-
-    async function carregarCampi() {
-        try {
-            const resposta = await fetch(
-                "http://localhost:3000/campus"
-            );
-
-            if (!resposta.ok) {
-                throw new Error("Erro ao carregar os campi.");
-            }
-
-            const dados = await resposta.json();
-
-            setCampi(dados);
-
-        } catch (erro) {
-            console.error(erro);
-            setErro("Não foi possível carregar os campi.");
-        }
-    }
 
     async function cadastrar(event) {
         event.preventDefault();
 
         setErro("");
         setSucesso("");
+
+        const nomeLimpo = nome.trim();
+        const emailLimpo = email.trim().toLowerCase();
+
+        if (!nomeLimpo || !emailLimpo || !senha || !confirmarSenha) {
+            setErro("Preencha todos os campos.");
+            return;
+        }
+
+        if (senha.length < 6) {
+            setErro("A senha deve ter pelo menos 6 caracteres.");
+            return;
+        }
+
+        if (senha !== confirmarSenha) {
+            setErro("As senhas não coincidem.");
+            return;
+        }
+
         setCarregando(true);
 
         try {
-            const resposta = await fetch(
-                "http://localhost:3000/usuarios",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        nome,
-                        email,
-                        senha,
-                        campusId: Number(campusId),
-                    }),
-                }
-            );
+            const resposta = await fetch("http://localhost:3000/usuarios", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    nome: nomeLimpo,
+                    email: emailLimpo,
+                    senha: senha,
+                }),
+            });
 
-            const dados = await resposta.json();
+            let dados = {};
+
+            try {
+                dados = await resposta.json();
+            } catch {
+                dados = {};
+            }
 
             if (!resposta.ok) {
+                if (resposta.status === 409) {
+                    throw new Error(
+                        "Já existe um usuário com esse email."
+                    );
+                }
+
                 throw new Error(
-                    dados.mensagem || "Erro ao realizar cadastro."
+                    dados.mensagem ||
+                        dados.Mensagem ||
+                        "Não foi possível realizar o cadastro."
                 );
             }
 
-            setSucesso("Cadastro realizado com sucesso!");
+            setSucesso(
+                "Cadastro realizado com sucesso! Redirecionando para o login..."
+            );
 
             setNome("");
             setEmail("");
             setSenha("");
-            setCampusId("");
+            setConfirmarSenha("");
 
             setTimeout(() => {
-                navigate("/login");
-            }, 1500);
+                navigate("/login", { replace: true });
+            }, 1200);
+        } catch (error) {
+            console.error("Erro no cadastro:", error);
 
-        } catch (erro) {
-            console.error(erro);
-            setErro(erro.message);
+            if (
+                error instanceof TypeError &&
+                error.message.includes("fetch")
+            ) {
+                setErro(
+                    "Não foi possível conectar ao servidor. Verifique se o backend está rodando."
+                );
+            } else {
+                setErro(
+                    error.message ||
+                        "Não foi possível realizar o cadastro."
+                );
+            }
         } finally {
             setCarregando(false);
         }
     }
 
     return (
-        <div className="login-page">
-
-            <div className="login-card">
-
-                <div className="login-logo">
-                    🏆
+        <div className="auth-page">
+            <div className="auth-card">
+                <div className="auth-logo">
+                    <span>🏆</span>
                 </div>
 
-                <h1>Criar conta</h1>
+                <div className="auth-header">
+                    <h1>Criar conta</h1>
 
-                <p className="login-subtitulo">
-                    Cadastre-se no IF Esporte
-                </p>
+                    <p>
+                        Cadastre-se para acessar o IF Esporte
+                    </p>
+                </div>
 
                 <form onSubmit={cadastrar}>
-
-                    <div className="login-campo">
+                    <div className="form-group">
                         <label htmlFor="nome">
-                            Nome
+                            Nome completo
                         </label>
 
                         <input
@@ -119,11 +136,12 @@ function Cadastro() {
                             onChange={(event) =>
                                 setNome(event.target.value)
                             }
+                            disabled={carregando}
                             required
                         />
                     </div>
 
-                    <div className="login-campo">
+                    <div className="form-group">
                         <label htmlFor="email">
                             E-mail
                         </label>
@@ -136,11 +154,12 @@ function Cadastro() {
                             onChange={(event) =>
                                 setEmail(event.target.value)
                             }
+                            disabled={carregando}
                             required
                         />
                     </div>
 
-                    <div className="login-campo">
+                    <div className="form-group">
                         <label htmlFor="senha">
                             Senha
                         </label>
@@ -153,63 +172,55 @@ function Cadastro() {
                             onChange={(event) =>
                                 setSenha(event.target.value)
                             }
+                            disabled={carregando}
+                            minLength={6}
                             required
                         />
                     </div>
 
-                    <div className="login-campo">
-                        <label htmlFor="campus">
-                            Campus
+                    <div className="form-group">
+                        <label htmlFor="confirmarSenha">
+                            Confirmar senha
                         </label>
 
-                        <select
-                            id="campus"
-                            value={campusId}
+                        <input
+                            id="confirmarSenha"
+                            type="password"
+                            placeholder="Digite a senha novamente"
+                            value={confirmarSenha}
                             onChange={(event) =>
-                                setCampusId(event.target.value)
+                                setConfirmarSenha(event.target.value)
                             }
+                            disabled={carregando}
+                            minLength={6}
                             required
-                        >
-                            <option value="">
-                                Selecione seu campus
-                            </option>
-
-                            {campi.map((campus) => (
-                                <option
-                                    key={campus.id}
-                                    value={campus.id}
-                                >
-                                    {campus.nome}
-                                </option>
-                            ))}
-                        </select>
+                        />
                     </div>
 
                     {erro && (
-                        <div className="login-erro">
+                        <div className="auth-error">
                             {erro}
                         </div>
                     )}
 
                     {sucesso && (
-                        <div className="login-sucesso">
+                        <div className="auth-success">
                             {sucesso}
                         </div>
                     )}
 
                     <button
                         type="submit"
-                        className="login-botao"
+                        className="auth-button"
                         disabled={carregando}
                     >
                         {carregando
-                            ? "Cadastrando..."
-                            : "Cadastrar"}
+                            ? "Criando conta..."
+                            : "Criar conta"}
                     </button>
-
                 </form>
 
-                <div className="login-cadastro">
+                <div className="auth-footer">
                     <span>
                         Já possui uma conta?
                     </span>
@@ -218,9 +229,7 @@ function Cadastro() {
                         Entrar
                     </Link>
                 </div>
-
             </div>
-
         </div>
     );
 }

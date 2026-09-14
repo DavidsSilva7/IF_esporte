@@ -16,36 +16,36 @@ function Login() {
         setCarregando(true);
 
         try {
-            const resposta = await fetch("http://localhost:3000/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email,
-                    senha,
-                }),
-            });
+            const resposta = await fetch(
+                "http://localhost:3000/auth/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: email.trim(),
+                        senha,
+                    }),
+                }
+            );
 
             const dados = await resposta.json();
 
             if (!resposta.ok) {
                 throw new Error(
-                    dados.mensagem || "Erro ao realizar login."
+                    dados.mensagem || "E-mail ou senha inválidos."
                 );
             }
 
-            // Salva o token
             localStorage.setItem("token", dados.token);
 
-            // Salva os dados do usuário
             localStorage.setItem(
                 "usuario",
                 JSON.stringify(dados.usuario)
             );
 
-            // Vai para o sistema
-            navigate("/");
+            navigate("/dashboard", { replace: true });
 
         } catch (erro) {
             console.error(erro);
@@ -57,9 +57,17 @@ function Login() {
 
     function entrarComoVisitante() {
         localStorage.removeItem("token");
-        localStorage.removeItem("usuario");
 
-        navigate("/");
+        localStorage.setItem(
+            "usuario",
+            JSON.stringify({
+                id: null,
+                nome: "Visitante",
+                role: "VISITANTE",
+            })
+        );
+
+        navigate("/eventos", { replace: true });
     }
 
     return (
@@ -80,6 +88,7 @@ function Login() {
                 <form onSubmit={fazerLogin}>
 
                     <div className="login-campo">
+
                         <label htmlFor="email">
                             E-mail
                         </label>
@@ -94,6 +103,7 @@ function Login() {
                             }
                             required
                         />
+
                     </div>
 
                     <div className="login-campo">
